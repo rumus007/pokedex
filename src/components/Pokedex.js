@@ -1,3 +1,4 @@
+import { type } from "@testing-library/user-event/dist/type";
 import React from "react";
 import { connect } from "react-redux";
 import { fetchPokemonList } from "./../actions";
@@ -7,7 +8,34 @@ class Pokedex extends React.Component {
     this.props.fetchPokemonList();
   }
 
+  renderTypes(types) {
+    return types.map((type) => {
+      return (
+        <div key={type.type.name} id="type-screen" className="right-panel-screen">
+          {type.type.name}
+        </div>
+      );
+    });
+  }
+
   render() {
+    if (!this.props.pokemon) {
+      return null;
+    }
+
+    const { forms, height, weight, types, sprites } = this.props.pokemon;
+    const bgImg = sprites.front_default;
+    const sectionStyle = {
+        height: "100%",
+        width: "80%",
+        justifySelf: "center",
+        backgroundImage: `url(${bgImg})`,
+        border: "solid black 2px",
+        borderRadius:"5%",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "contain",
+    }
     return (
       <div id="pokedex">
         {/* <!-- Left Panel --> */}
@@ -46,7 +74,7 @@ class Pokedex extends React.Component {
                 <div className="mini-light red"></div>
                 <div className="mini-light red"></div>
               </div>
-              <div id="main-screen"></div>
+              <div id="main-screen" style={sectionStyle}></div>
               <div className="bottom-screen-lights">
                 <div className="small-light red">
                   <div className="dot light-red"></div>
@@ -75,7 +103,7 @@ class Pokedex extends React.Component {
                 <div>.</div>
               </div>
               <div className="green-screen">
-                <span id="name-screen">bulbasaur</span>
+                <span id="name-screen">{forms[0].name}</span>
               </div>
               <div className="right-nav-container">
                 <div className="nav-button">
@@ -120,7 +148,7 @@ class Pokedex extends React.Component {
           {/* <!-- Top screen --> */}
           <div className="top-screen-container">
             <div id="about-screen" className="right-panel-screen">
-              Height: 70cm Weight: 6.9kg
+              Height: {height}cm Weight: {weight}kg
             </div>
           </div>
           {/* <!-- Blue Buttons --> */}
@@ -166,12 +194,7 @@ class Pokedex extends React.Component {
           </div>
           {/* <!-- Bottom screens --> */}
           <div className="bottom-screens-container">
-            <div id="type-screen" className="right-panel-screen">
-              grass
-            </div>
-            <div id="id-screen" className="right-panel-screen">
-              #1
-            </div>
+            {this.renderTypes(types)}
           </div>
         </div>
       </div>
@@ -179,4 +202,10 @@ class Pokedex extends React.Component {
   }
 }
 
-export default connect(null, { fetchPokemonList })(Pokedex);
+const mapStateToProps = (state) => {
+  return {
+    pokemon: state.pokemon.selectedPokemon,
+  };
+};
+
+export default connect(mapStateToProps, { fetchPokemonList })(Pokedex);

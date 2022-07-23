@@ -14,3 +14,12 @@ export const fetchPokemonList = () => async (dispatch) => {
     dispatch({ type: ERROR_FETCH_POKEMONS, payload: true });
   }
 };
+
+export const fetchPokemon = (name) => async (dispatch) => {
+  try {
+    const response = await pokemonService.get(`pokemon/${name}`);
+    dispatch({ type: FETCH_POKEMON, payload: response.data });
+  } catch (error) {
+    dispatch({ type: ERROR_FETCH_POKEMON, payload: true });
+  }
+};
